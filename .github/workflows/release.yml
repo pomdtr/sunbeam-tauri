@@ -2,8 +2,8 @@ name: "Release"
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*"
 
 jobs:
   create-release:
@@ -44,6 +44,10 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-20.04, windows-latest]
+        arch: [x64, arm64]
+        exclude:
+          - platform: windows-latest
+            arch: arm64
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -59,14 +63,36 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install rust target (macos only)
+        if: matrix.arch == 'arm64' && matrix.platform == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin
+      - name: install rust target (ubuntu only)
+        if: matrix.arch == 'arm64' && matrix.platform == 'ubuntu-20.04'
+        run: |
+          rustup target add aarch64-unknown-linux-gnu
       - name: install app dependencies and build it
         run: npm install && npm run build
       - uses: tauri-apps/tauri-action@v0
+        if: matrix.arch == 'x64'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
-
+      - uses: tauri-apps/tauri-action@v0
+        if: matrix.arch == 'arm64' && matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: --target aarch64-apple-darwin
+      - uses: tauri-apps/tauri-action@v0
+        if: matrix.arch == 'arm64' && matrix.platform == 'ubuntu-20.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: --target aarch64-unknown-linux-gnu
   publish-release:
     runs-on: ubuntu-20.04
     needs: [create-release, build-tauri]
