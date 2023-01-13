@@ -1,0 +1,114 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist",
+    "withGlobalTauri": true
+  },
+  "package": {
+    "productName": "Sunbeam",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "macOSPrivateApi": false,
+    "allowlist": {
+      "all": false,
+      "globalShortcut": {
+        "all": true
+      },
+      "process": {
+        "all": false,
+        "exit": true
+      },
+      "clipboard": {
+        "writeText": true
+      },
+      "http": {
+        "all": false,
+        "request": true,
+        "scope": [
+          "http://localhost:8080/ready"
+        ]
+      },
+      "window": {
+        "hide": true,
+        "setFocus": true,
+        "show": true
+      },
+      "shell": {
+        "all": false,
+        "open": ".+",
+        "execute": true,
+        "scope": [
+          {
+            "name": "sunbeam-server",
+            "cmd": "sunbeam",
+            "args": [
+              "listen",
+              {
+                "validator": "--host=\\S+"
+              },
+              {
+                "validator": "--port=\\d+"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "bundle": {
+      "active": true,
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "com.github.pomdtr.sunbeam",
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "width": 750,
+        "height": 500,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "title": "Sunbeam",
+        "decorations": false,
+        "visible": false,
+        "center": true,
+        "skipTaskbar": true,
+        "focus": true
+      }
+    ]
+  }
+}
