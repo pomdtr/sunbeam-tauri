@@ -1,0 +1,28 @@
+name: package-tauri
+description: Package Tauri app
+inputs:
+  target:
+    description: Target platform
+    required: true
+  release-id:
+    description: Release ID
+    required: true
+  github-token:
+    description: GitHub token
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: install rust arm64 target (macos only)
+      shell: bash
+      if: target == 'aarch64-apple-darwin'
+      run: |
+        rustup target add aarch64-apple-darwin
+    - name: install rust arm64 target (ubuntu only)
+      shell: bash
+      if: target == 'aarch64-unknown-linux-gnu'
+      run: |
+        rustup target add aarch64-unknown-linux-gnu
+    - name: build-app
+      shell: bash
+      run: npm run tauri build --target ${{ inputs.target }}
