@@ -15,4 +15,4 @@ runs:
   steps:
     - name: build-app
       shell: bash
-      run: npm run tauri build --target ${{ inputs.target }}
+      run: npm run tauri -- build --target ${{ inputs.target }}
