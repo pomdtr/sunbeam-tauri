@@ -1,9 +1,7 @@
 name: "Release"
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   # create-release:
@@ -78,7 +76,7 @@ jobs:
             echo "TARGET=x86_64-unknown-linux-gnu" >> $GITHUB_OUTPUT
           fi
       - name: install rust arm64 target
-        if: steps.get-target.outputs.TARGET == 'aarch64-apple-darwin'
+        if: matrix.arch == 'arm64'
         run: rustup target add ${{ steps.get-target.outputs.TARGET }}
       - name: install app dependencies
         run: npm install
