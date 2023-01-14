@@ -61,25 +61,26 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: get target
+        id: get-target
         run: |
           if [ "${{ matrix.platform }}" == "macos-latest" -a "${{ matrix.arch }}" == "x64" ]; then
-            echo "TARGET=aarch64-apple-darwin" >> $GITHUB_ENV
+            echo "TARGET=aarch64-apple-darwin" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.platform }}" == "macos-latest" -a "${{ matrix.arch }}" == "arm64" ]; then
-            echo "TARGET=x86_64-apple-darwin" >> $GITHUB_ENV
+            echo "TARGET=x86_64-apple-darwin" >> $GITHUB_OUTPUT
           fi
       - name: install rust arm64 target
-        if: env.TARGET == 'aarch64-apple-darwin'
-        run: rustup target add ${{ env.TARGET }}
+        if: steps.get-target.outputs.TARGET == 'aarch64-apple-darwin'
+        run: rustup target add ${{ steps.get-target.outputs.TARGET }}
       - name: install app dependencies
         run: npm install
       - name: build app
         shell: bash
-        run: npm run tauri -- build --target ${{ inputs.target }}
+        run: npm run tauri -- build --target ${{ steps.get-target.outputs.TARGET }}
       - name: publisn artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}-${{ matrix.arch }}
-          path: src-tauri/target/${{ env.TARGET }}/release/bundle/
+          path: src-tauri/target/${{ steps.get-target.outputs.TARGET }}/release/bundle/
 
   # publish-release:
   #   runs-on: ubuntu-20.04
