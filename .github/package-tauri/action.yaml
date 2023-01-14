@@ -13,16 +13,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: install rust arm64 target (macos only)
-      shell: bash
-      if: target == 'aarch64-apple-darwin'
-      run: |
-        rustup target add aarch64-apple-darwin
-    - name: install rust arm64 target (ubuntu only)
-      shell: bash
-      if: target == 'aarch64-unknown-linux-gnu'
-      run: |
-        rustup target add aarch64-unknown-linux-gnu
     - name: build-app
       shell: bash
       run: npm run tauri build --target ${{ inputs.target }}

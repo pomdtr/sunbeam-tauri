@@ -62,10 +62,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: get target
         run: |
-          if [ "${{ matrix.platform }}" == "macos-latest" -a "${{ arch }}" == "x64" ]; then
+          if [ "${{ matrix.platform }}" == "macos-latest" -a "${{ matrix.arch }}" == "x64" ]; then
             echo "TARGET=aarch64-apple-darwin" >> $GITHUB_ENV
-          elif [ "${{ matrix.platform }}" == "macos-latest" -a "${{ arch }}" == "arm64" ]; then
-            echo "TARGET=aarch64-apple-darwin" >> $GITHUB_ENV
+          elif [ "${{ matrix.platform }}" == "macos-latest" -a "${{ matrix.arch }}" == "arm64" ]; then
+            echo "TARGET=x86_64-apple-darwin" >> $GITHUB_ENV
           fi
       - name: install rust arm64 target
         if: env.TARGET == 'aarch64-apple-darwin'
@@ -74,6 +74,8 @@ jobs:
         run: npm install
       - name: build packages
         uses: ./.github/package-tauri
+        with:
+          target: ${{ env.TARGET }}
 
   # publish-release:
   #   runs-on: ubuntu-20.04
