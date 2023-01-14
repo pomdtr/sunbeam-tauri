@@ -72,10 +72,14 @@ jobs:
         run: rustup target add ${{ env.TARGET }}
       - name: install app dependencies
         run: npm install
-      - name: build packages
-        uses: ./.github/package-tauri
+      - name: build app
+        shell: bash
+        run: npm run tauri -- build --target ${{ inputs.target }}
+      - name: publisn artifacts
+        uses: actions/upload-artifact@v2
         with:
-          target: ${{ env.TARGET }}
+          name: ${{ matrix.platform }}-${{ matrix.arch }}
+          path: src-tauri/target/${{ env.TARGET }}/release/bundle/
 
   # publish-release:
   #   runs-on: ubuntu-20.04
