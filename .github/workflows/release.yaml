@@ -48,7 +48,7 @@ jobs:
         exclude:
           - platform: windows-latest
             arch: arm64
-          - platform: ubuntu-latest
+          - platform: ubuntu-18.04
             arch: arm64
 
     runs-on: ${{ matrix.platform }}
@@ -67,6 +67,10 @@ jobs:
             echo "TARGET=aarch64-apple-darwin" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.platform }}" == "macos-latest" -a "${{ matrix.arch }}" == "arm64" ]; then
             echo "TARGET=x86_64-apple-darwin" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.platform }}" == "windows-latest" -a "${{ matrix.arch }}" == "x64" ]; then
+            echo "TARGET=x86_64-pc-windows-msvc" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.platform }}" == "ubuntu-18.04" -a "${{ matrix.arch }}" == "x64" ]; then
+            echo "TARGET=x86_64-unknown-linux-gnu" >> $GITHUB_OUTPUT
           fi
       - name: install rust arm64 target
         if: steps.get-target.outputs.TARGET == 'aarch64-apple-darwin'
